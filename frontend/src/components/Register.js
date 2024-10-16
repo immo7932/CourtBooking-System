@@ -14,7 +14,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/createUser/",
+        "https://gamestheory1.onrender.com/api/auth/createUser/",
         {
           name,
           email,

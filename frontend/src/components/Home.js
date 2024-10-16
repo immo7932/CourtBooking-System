@@ -18,7 +18,7 @@ const Home = () => {
     const fetchCentres = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8080/api/centres/getCentres/"
+          "https://gamestheory1.onrender.com/api/centres/getCentres/"
         );
         setCentres(res.data.centres);
       } catch (err) {
@@ -58,7 +58,7 @@ const Home = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/centres/${centre._id}/sports`
+        `https://gamestheory1.onrender.com/api/centres/${centre._id}/sports`
       );
       setSports(res.data.sports);
     } catch (err) {
@@ -78,7 +78,7 @@ const Home = () => {
     if (!selectedSport || !selectedDate) return;
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
+        `https://gamestheory1.onrender.com/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
       );
       setAvailableCourts(res.data.availableCourts);
     } catch (err) {
@@ -93,7 +93,7 @@ const Home = () => {
     try {
       const res = await axios.get(
         //:centre/:sport/:court/:date/timeslots
-        `http://localhost:8080/api/centres/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${selectedDate}/timeslots`
+        `https://gamestheory1.onrender.com/api/centres/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${selectedDate}/timeslots`
       );
       console.log(res.data);
       setAvailableSlots(res.data.availableSlots);
@@ -123,7 +123,7 @@ const Home = () => {
       return; // Ensure all necessary data is available
     }
 
-    const bookingUrl = `http://localhost:8080/api/centres/book/${
+    const bookingUrl = `https://gamestheory1.onrender.com/api/centres/book/${
       selectedCentre._id
     }/${selectedSport._id}/${selectedCourt._id}/${startTime}/${
       endTime + ":00"
