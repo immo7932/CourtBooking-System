@@ -4,7 +4,7 @@
   "description": "iNotebook  - Your Notebook on the cloud",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "dev": "nodemon index.js",
      "postinstall": "npm rebuild bcrypt --build-from-source"
   },

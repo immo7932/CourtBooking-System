@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // Added for error handling
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Reset error message before new submission
+
     try {
       const response = await axios.post(
-        "https://gamestheory1.onrender.com/api/auth/login",
+        "http://localhost:8080/api/auth/login",
         {
           email,
           password,
@@ -20,12 +23,32 @@ const Login = () => {
 
       console.log("Login successful", response.data);
 
-      // Save user ID in local storage
-      localStorage.setItem("userId", response.data.userId); // Assuming you get userId from response
+      // Save user ID and authToken in local storage
+      localStorage.setItem("userId", response.data.userId); // userId1 from the backend response
+      localStorage.setItem("authToken", response.data.authToken); // Store the authToken if needed
+
       // Redirect to the home page
       navigate("/home");
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
+      if (error.response) {
+        // Handle specific status codes
+        if (error.response.status === 401) {
+          setErrorMessage("Invalid email or password."); // Show the error from the backend
+        } else if (error.response.status === 500) {
+          setErrorMessage("Server error. Unable to login. Please try again.");
+        } else {
+          setErrorMessage(
+            error.response.data.message ||
+              "Login failed. Please check your credentials."
+          );
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        setErrorMessage("No response from the server. Please try again.");
+      } else {
+        // Other errors
+        setErrorMessage(error.message);
+      }
     }
 
     // Clear the form
@@ -36,6 +59,10 @@ const Login = () => {
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Login</h2>
+
+      {/* Display error message if any */}
+      {errorMessage && <div style={styles.error}>{errorMessage}</div>}
+
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <label style={styles.label}>Email:</label>
@@ -109,10 +136,6 @@ const styles = {
     borderRadius: "4px",
     transition: "border-color 0.3s",
   },
-  inputFocus: {
-    borderColor: "#007bff",
-    outline: "none",
-  },
   button: {
     padding: "10px",
     backgroundColor: "#007bff",
@@ -123,9 +146,6 @@ const styles = {
     fontSize: "16px",
     transition: "background-color 0.3s",
   },
-  buttonHover: {
-    backgroundColor: "#0056b3",
-  },
   footer: {
     marginTop: "20px",
     color: "#666",
@@ -133,6 +153,11 @@ const styles = {
   link: {
     color: "#007bff",
     textDecoration: "none",
+  },
+  error: {
+    color: "red",
+    marginBottom: "15px",
+    fontWeight: "bold",
   },
 };
 

@@ -31,13 +31,16 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.statics.findAndValidate = async function (email, password) {
   const foundUser = await this.findOne({ email });
-  console.log(foundUser);
+
   if (!foundUser) {
-    return false;
+    return null;
   }
-  if (foundUser.password == password) {
-    return true;
+
+  if (foundUser.password === password) {
+    return foundUser;
   }
-  return false;
+
+  return null;
 };
+
 module.exports = mongoose.model("Users", UserSchema);

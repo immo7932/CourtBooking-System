@@ -7,14 +7,44 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("customer");
+  const [errorMessage, setErrorMessage] = useState(""); // Error message for API call
+  const [validationError, setValidationError] = useState(""); // For form validation errors
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    // Check if the name is at least 2 characters long
+    if (name.length < 2) {
+      return "Name must be at least 2 characters long.";
+    }
+
+    // Email validation using a simple regex pattern
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return "Please enter a valid email address.";
+    }
+
+    // Password validation
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long.";
+    }
+
+    return ""; // No validation errors
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Reset error message before new submission
+    setValidationError(""); // Reset validation error
+
+    const validationError = validateForm();
+    if (validationError) {
+      setValidationError(validationError);
+      return; // Do not proceed if validation fails
+    }
 
     try {
       const response = await axios.post(
-        "https://gamestheory1.onrender.com/api/auth/createUser/",
+        "http://localhost:8080/api/auth/createUser/",
         {
           name,
           email,
@@ -24,20 +54,41 @@ const Register = () => {
       );
 
       console.log("Registration successful", response.data);
+
       // Clear the form
       setName("");
       setEmail("");
       setPassword("");
       setRole("customer");
+
+      // Navigate to the login page
       navigate("/login");
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        setErrorMessage(error.response.data.message || "Email already used");
+      } else if (error.request) {
+        // Request was made but no response received
+        setErrorMessage("No response from the server. Please try again.");
+      } else {
+        // Other errors
+        setErrorMessage(error.message);
+      }
     }
   };
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Register</h2>
+
+      {/* Display validation error message if any */}
+      {validationError && (
+        <div style={styles.validationError}>{validationError}</div>
+      )}
+
+      {/* Display API error message if any */}
+      {errorMessage && <div style={styles.error}>{errorMessage}</div>}
+
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <label style={styles.label}>Name:</label>
@@ -142,9 +193,6 @@ const styles = {
     fontSize: "16px",
     transition: "background-color 0.3s",
   },
-  buttonHover: {
-    backgroundColor: "#0056b3",
-  },
   footer: {
     marginTop: "20px",
     color: "#666",
@@ -152,6 +200,16 @@ const styles = {
   link: {
     color: "#007bff",
     textDecoration: "none",
+  },
+  error: {
+    color: "red",
+    marginBottom: "15px",
+    fontWeight: "bold",
+  },
+  validationError: {
+    color: "orange",
+    marginBottom: "15px",
+    fontWeight: "bold",
   },
 };
 
