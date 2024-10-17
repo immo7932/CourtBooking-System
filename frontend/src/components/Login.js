@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 const URL = " https://games-theory-frontend.vercel.app";
+const LOCALURL = "http://localhost:8080";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `${URL}/api/auth/login`,
+        `https://games-theory-frontend.vercel.app/api/auth/login`,
         {
           email,
           password,

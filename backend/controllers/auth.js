@@ -58,7 +58,7 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log("dd");
   try {
     // Find the user by email
     const foundUser = await userModel.findOne({ email });

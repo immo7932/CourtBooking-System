@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Navbar, Nav, Button } from "react-bootstrap";
 import axios from "axios";
 const URL = "https://games-theory-frontend.vercel.app";
+const LOCALURL = "http://localhost/8080";
 const Home = () => {
   const [centres, setCentres] = useState([]);
   const [selectedCentre, setSelectedCentre] = useState(null);
@@ -19,7 +20,7 @@ const Home = () => {
     const fetchCentres = async () => {
       try {
         const res = await axios.get(
-          `${URL}/api/centres/getCentres/`
+          `https://games-theory-frontend.vercel.app/api/centres/getCentres/`
         );
         setCentres(res.data.centres);
       } catch (err) {
@@ -59,7 +60,7 @@ const Home = () => {
 
     try {
       const res = await axios.get(
-        `${URL}/api/centres/${centre._id}/sports`
+        `https://games-theory-frontend.vercel.app/api/centres/${centre._id}/sports`
       );
       setSports(res.data.sports);
     } catch (err) {
@@ -79,7 +80,7 @@ const Home = () => {
     if (!selectedSport || !selectedDate) return;
     try {
       const res = await axios.get(
-        `${URL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
+        `https://games-theory-frontend.vercel.app/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
       );
       setAvailableCourts(res.data.availableCourts);
     } catch (err) {
@@ -94,7 +95,7 @@ const Home = () => {
     try {
       const res = await axios.get(
         //:centre/:sport/:court/:date/timeslots
-        `${URL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${selectedDate}/timeslots`
+        `https://games-theory-frontend.vercel.app/api/centres/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${selectedDate}/timeslots`
       );
       console.log(res.data);
       setAvailableSlots(res.data.availableSlots);
@@ -124,7 +125,7 @@ const Home = () => {
       return; // Ensure all necessary data is available
     }
 
-    const bookingUrl = `${URL}/api/centres/book/${
+    const bookingUrl = `https://games-theory-frontend.vercel.app/api/centres/book/${
       selectedCentre._id
     }/${selectedSport._id}/${selectedCourt._id}/${startTime}/${
       endTime + ":00"
