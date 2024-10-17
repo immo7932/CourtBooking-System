@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+const URL = "https://games-theory-frontend.vercel.app";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,15 +43,12 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/createUser/",
-        {
-          name,
-          email,
-          password,
-          role,
-        }
-      );
+      const response = await axios.post(`${URL}/api/auth/createUser/`, {
+        name,
+        email,
+        password,
+        role,
+      });
 
       console.log("Registration successful", response.data);
 
