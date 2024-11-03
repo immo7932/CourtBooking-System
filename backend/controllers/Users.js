@@ -46,6 +46,8 @@ const getBookingDetails = async (req, res) => {
         year: "numeric",
       }).format(date);
 
+
+      
       // Format start and end times to IST (HH:MM AM/PM format)
       const startTimeIST = new Date(
         `1970-01-01T${booking.startTime}:00Z`
