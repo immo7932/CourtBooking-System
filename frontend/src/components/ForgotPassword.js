@@ -41,7 +41,7 @@ const ForgotPassword = () => {
 
     try {
       console.log(API_URL)
-      console.log()
+      console.log("hh");
       const response = await axios.post(
         `${API_URL}/api/auth/forgotPassword`,
         {
