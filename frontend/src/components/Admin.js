@@ -15,6 +15,10 @@ import {
   Snackbar,
   Alert, // Added Snackbar and Alert for messages
 } from "@mui/material";
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 const AdminPage = () => {
  
@@ -39,7 +43,7 @@ const AdminPage = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.GLOBALURL}/api/centres/getCentres`
+        `${API_URL}/api/centres/getCentres`
       );
       setCentres(res.data);
     } catch (err) {
@@ -55,7 +59,7 @@ const AdminPage = () => {
     try { 
       console.log(selectedCentre+"dcds");
       const res = await axios.get(
-        `${process.env.GLOBALURL}/api/centres/getSports/${selectedCentre}`
+        `${API_URL}/api/centres/getSports/${selectedCentre}`
       );
       console.log(res.data);
       setSportAtCentre(res.data);
@@ -72,7 +76,7 @@ const AdminPage = () => {
 
   const addCentre = async () => {
     try {
-      await axios.post(`${process.env.GLOBALURL}/api/centres/add-centres`, {
+      await axios.post(`${API_URL}/api/centres/add-centres`, {
         name: centreName,
         location,
       });
@@ -90,7 +94,7 @@ const AdminPage = () => {
     if (!selectedCentre) return;
     try {
       await axios.post(
-        `${process.env.GLOBALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
+        `${API_URL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
         {
           name: sportName,
         }
@@ -108,7 +112,7 @@ const AdminPage = () => {
     if (!selectedSport) return;
     try {
       await axios.post(
-        `${process.env.GLOBALURL}/api/centres/add-court/${selectedSport}`,
+        `${API_URL}/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
         }

@@ -13,6 +13,10 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 
 const ResetPassword = () => {
@@ -53,7 +57,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/updatePassword/${token}`,
+        `${API_URL}/api/auth/updatePassword/${token}`,
         {
           password,
         }

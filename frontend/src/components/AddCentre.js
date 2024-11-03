@@ -11,6 +11,10 @@ import {
   Container,
 } from "@mui/material";
 import Sidebar from "./Sidebar";
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 const AddCentre = () => {
  
@@ -28,7 +32,7 @@ const AddCentre = () => {
 
   const addCentre = async () => {
     try {
-      await axios.post(`${process.env.GLOBALURL}/api/centres/add-centres`, {
+      await axios.post(`${API_URL}/api/centres/add-centres`, {
         name: centreName,
         location,
       });

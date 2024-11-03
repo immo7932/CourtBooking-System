@@ -12,8 +12,10 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -38,13 +40,14 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
+      console.log(API_URL)
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/forgotPassword`,
+        `${API_URL}/api/auth/forgotPassword`,
         {
           email,
         }
       );
-
+    //  console.log(response)
       setMessage(
         "If this email is registered, you will receive a password reset link shortly."
       );

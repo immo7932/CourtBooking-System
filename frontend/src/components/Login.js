@@ -16,7 +16,10 @@ import { useNavigate, Link } from "react-router-dom";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "mdi-material-ui/Google"; // Import GoogleIcon
 
-
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -41,14 +44,17 @@ const Login = () => {
     setErrorMessage(""); // Reset error message before new submission
     setLoading(true); // Start loader
 
+
     try {
+      console.log(process.env.LOCALURL)
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/login`,
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,
         }
       );
+      
 
       console.log("Login successful", response.data);
 

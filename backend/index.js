@@ -10,10 +10,12 @@ const authRoute = require("./routes/auth");
 const centres = require("./routes/centres");
 const createBooking = require("./routes/createBooking");
 const Users = require("./models/Users");
+
 const Users1=require("./routes/users")
 // express init
 const app = express();
 // mongoose init
+
 const dbUrl = process.env.DB_URL;
 async function main() {
   await mongoose.connect(dbUrl);

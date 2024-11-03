@@ -7,7 +7,10 @@ const Otp = require("../models/Otp.js");
 const sendOtpEmail = require("../mailer/sendOtpEmail.js");
 const resetMailOptions = require("../mailer/resetPasswordMail.js");
 const crypto = require("crypto");
-
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.LOCALURL
+    : process.env.GLOBALURL;
 const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -211,7 +214,10 @@ const loginUser = async (req, res) => {
   }
 };
 
+
+
 const forgotPassword = async (req, res) => {
+  console.log("eee");
   const { email } = req.body;
 
   try {
@@ -238,7 +244,7 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Create reset URL
-    const resetURL = `${process.env.LOCALURL}/resetPassword/${resetToken}`;
+    const resetURL = `${API_URL}/resetPassword/${resetToken}`;
     await resetMailOptions(email, resetURL);
 
     // Email content

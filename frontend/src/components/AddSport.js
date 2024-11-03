@@ -16,6 +16,10 @@ import {
 } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 const AddSport = () => {
  
@@ -42,7 +46,7 @@ const AddSport = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.GLOBALURL}/api/centres/getCentres`
+        `${API_URL}/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -63,7 +67,7 @@ const AddSport = () => {
     }
     try {
       await axios.post(
-        `${process.env.GLOBALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`
+        `${API_URL}/api/centres/add-sport/${selectedCentre}/${sportName}`
       );
       setSportName("");
       showMessage("Sport added successfully", "success");

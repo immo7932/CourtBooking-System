@@ -23,6 +23,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import axios from "axios";
 import Sidebar from "./Sidebar"; // Import the Sidebar component
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 
 
@@ -51,7 +55,7 @@ const Home = () => {
     const fetchCentres = async () => {
       try {
         const res = await axios.get(
-          `${process.env.GLOBALURL}/api/centres/getCentres/`
+          `${API_URL}/api/centres/getCentres/`
         );
         setCentres(res.data.centres);
       } catch (err) {
@@ -74,8 +78,9 @@ const Home = () => {
 
     if (centre) {
       try {
+        console.log(API_URL)
         const res = await axios.get(
-          `${process.env.GLOBALURL}/api/centres/${centre._id}/sports`
+          `${API_URL}/api/centres/${centre._id}/sports`
         );
         setSports(res.data.sports);
       } catch (err) {
@@ -99,7 +104,7 @@ const Home = () => {
     if (!selectedSport || !selectedDate) return;
     try {
       const res = await axios.get(
-        `${process.env.GLOBALURL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
+        `${API_URL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
       );
       setAvailableCourts(res.data.availableCourts);
     } catch (err) {
@@ -113,7 +118,7 @@ const Home = () => {
 
     try {
       const res = await axios.get(
-        `${process.env.GLOBALURL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
+        `${API_URL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
       );
       console.log(res.data);
       setAvailableSlots(res.data.availableSlots);
@@ -147,7 +152,7 @@ const Home = () => {
 
     setLoading(true); // Start loading
 
-    const bookingUrl = `${process.env.GLOBALURL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
+    const bookingUrl = `${API_URL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
     try {
       const res = await axios.post(bookingUrl);
       console.log("Booking response:", res.data);

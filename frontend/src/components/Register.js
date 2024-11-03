@@ -20,6 +20,10 @@ import { useNavigate, Link } from "react-router-dom";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.REACT_APP_LOCALURL
+    : process.env.REACT_APP_GLOBALURL;
 
 
 const Register = () => {
@@ -80,7 +84,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/createuser/`,
+        `${API_URL}/api/auth/createuser/`,
         {
           name,
           email,
@@ -129,7 +133,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/verifyOtp`,
+        `${API_URL}/api/auth/verifyOtp`,
         {
           email,
           otp,
@@ -177,7 +181,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.GLOBALURL}/api/auth/resendOtp`,
+        `${API_URL}/api/auth/resendOtp`,
         {
           email,
         }
