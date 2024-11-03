@@ -84,7 +84,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/auth/createuser/`,
+        `https://gamestheory1.onrender.com/api/auth/createuser/`,
         {
           name,
           email,
@@ -133,7 +133,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/auth/verifyOtp`,
+        `https://gamestheory1.onrender.com/api/auth/verifyOtp`,
         {
           email,
           otp,
@@ -181,7 +181,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/auth/resendOtp`,
+        `https://gamestheory1.onrender.com/api/auth/resendOtp`,
         {
           email,
         }

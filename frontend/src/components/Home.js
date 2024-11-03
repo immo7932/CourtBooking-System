@@ -55,7 +55,7 @@ const Home = () => {
     const fetchCentres = async () => {
       try {
         const res = await axios.get(
-          `${API_URL}/api/centres/getCentres/`
+          `https://gamestheory1.onrender.com/api/centres/getCentres/`
         );
         setCentres(res.data.centres);
       } catch (err) {
@@ -80,7 +80,7 @@ const Home = () => {
       try {
         console.log(API_URL)
         const res = await axios.get(
-          `${API_URL}/api/centres/${centre._id}/sports`
+          `https://gamestheory1.onrender.com/api/centres/${centre._id}/sports`
         );
         setSports(res.data.sports);
       } catch (err) {
@@ -104,7 +104,7 @@ const Home = () => {
     if (!selectedSport || !selectedDate) return;
     try {
       const res = await axios.get(
-        `${API_URL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
+        `https://gamestheory1.onrender.com/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
       );
       setAvailableCourts(res.data.availableCourts);
     } catch (err) {
@@ -118,7 +118,7 @@ const Home = () => {
 
     try {
       const res = await axios.get(
-        `${API_URL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
+        `https://gamestheory1.onrender.com/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
       );
       console.log(res.data);
       setAvailableSlots(res.data.availableSlots);
@@ -152,7 +152,7 @@ const Home = () => {
 
     setLoading(true); // Start loading
 
-    const bookingUrl = `${API_URL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
+    const bookingUrl = `https://gamestheory1.onrender.com/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
     try {
       const res = await axios.post(bookingUrl);
       console.log("Booking response:", res.data);

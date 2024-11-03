@@ -49,7 +49,7 @@ const AddCourt = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/centres/getCentres`
+        `https://gamestheory1.onrender.com/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -60,7 +60,7 @@ const AddCourt = () => {
   const fetchSports = async (centreId) => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/centres/${centreId}/sports`
+        `https://gamestheory1.onrender.com/api/centres/${centreId}/sports`
       );
       setSports(res.data.sports || []);
     } catch (err) {
@@ -81,7 +81,7 @@ const AddCourt = () => {
     }
     try {
       await axios.post(
-        `${API_URL}/api/centres/add-court/${selectedSport}`,
+        `https://gamestheory1.onrender.com/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
         }

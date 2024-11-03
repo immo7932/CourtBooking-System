@@ -57,7 +57,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/auth/updatePassword/${token}`,
+        `https://gamestheory1.onrender.com/api/auth/updatePassword/${token}`,
         {
           password,
         }

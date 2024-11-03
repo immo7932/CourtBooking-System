@@ -48,7 +48,7 @@ const Login = () => {
     try {
       console.log(process.env.LOCALURL)
       const response = await axios.post(
-        `${API_URL}/api/auth/login`,
+        `https://gamestheory1.onrender.com/api/auth/login`,
         {
           email,
           password,

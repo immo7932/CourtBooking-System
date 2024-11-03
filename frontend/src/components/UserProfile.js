@@ -42,14 +42,14 @@ const UserProfile = () => {
     const fetchData = async () => {
       try {
         const userResponse = await axios.get(
-          `${API_URL}/api/User/getUserDetailS/${userId}`
+          `https://gamestheory1.onrender.com/api/User/getUserDetailS/${userId}`
         );
         setUser(userResponse.data);
 
         // If user is a customer, fetch bookings
         if (userResponse.data.role === "customer") {
           const bookingsResponse = await axios.get(
-            `${API_URL}/api/User/getBookingDetailS/${userId}`
+            `https://gamestheory1.onrender.com/api/User/getBookingDetailS/${userId}`
           );
           setBookings(bookingsResponse.data);
         }

@@ -30,12 +30,16 @@ const AddCentre = () => {
     setSnackbarOpen(true);
   };
 
+
   const addCentre = async () => {
     try {
-      await axios.post(`${API_URL}/api/centres/add-centres`, {
-        name: centreName,
-        location,
-      });
+      await axios.post(
+        `https://gamestheory1.onrender.com/api/centres/add-centres`,
+        {
+          name: centreName,
+          location,
+        }
+      );
       setCentreName("");
       setLocation("");
       showMessage("Centre added successfully", "success");

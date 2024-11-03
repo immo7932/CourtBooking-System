@@ -46,7 +46,7 @@ const AddSport = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/centres/getCentres`
+        `https://gamestheory1.onrender.com/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -67,7 +67,7 @@ const AddSport = () => {
     }
     try {
       await axios.post(
-        `${API_URL}/api/centres/add-sport/${selectedCentre}/${sportName}`
+        `https://gamestheory1.onrender.com/api/centres/add-sport/${selectedCentre}/${sportName}`
       );
       setSportName("");
       showMessage("Sport added successfully", "success");
