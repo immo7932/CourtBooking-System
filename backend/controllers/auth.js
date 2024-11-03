@@ -2,6 +2,11 @@ const userModel = require("../models/Users.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const Otp = require("../models/Otp.js");
+
+const sendOtpEmail = require("../mailer/sendOtpEmail.js");
+const resetMailOptions = require("../mailer/resetPasswordMail.js");
+const crypto = require("crypto");
 
 const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -35,7 +40,20 @@ const createUser = async (req, res) => {
     const user = new userModel({ name, email, password: hashedPassword, role });
 
     // Save the user to the database
+
     const savedUser = await user.save();
+    const otpValue = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
+    const hashedOtp = await bcrypt.hash(otpValue, 10);
+
+    // Save OTP to database
+    const otpEntry = new Otp({
+      userId: savedUser._id,
+      otp: hashedOtp,
+    });
+    await otpEntry.save();
+
+    // Send OTP via email
+    await sendOtpEmail(email, otpValue);
 
     // Return success response with the created user data
     return res.status(201).json({ success: true, user: savedUser });
@@ -56,9 +74,91 @@ const createUser = async (req, res) => {
   }
 };
 
+//verify otp
+const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Find the user
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified." });
+    }
+
+    // Find the OTP entry
+    const otpEntry = await Otp.findOne({ userId: user._id });
+    if (!otpEntry) {
+      return res.status(400).json({ message: "OTP not found or expired." });
+    }
+
+    // Compare OTPs
+    const isMatch = await bcrypt.compare(otp, otpEntry.otp);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+
+    // Verify the user
+    user.isVerified = true;
+    await user.save();
+
+    // Delete the OTP entry
+    await Otp.deleteOne({ _id: otpEntry._id });
+
+    res.status(200).json({ message: "User verified successfully." });
+  } catch (error) {
+    console.error("OTP Verification Error:", error);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+};
+
+//resend email for otp
+// routes/auth.js (continued)
+const resendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified." });
+    }
+
+    // Delete any existing OTP for this user
+    await Otp.deleteMany({ userId: user._id });
+
+    // Generate new OTP
+    const otpValue = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
+    const hashedOtp = await bcrypt.hash(otpValue, 10);
+
+    // Save new OTP to database
+    const otpEntry = new Otp({
+      userId: user._id,
+      otp: hashedOtp,
+    });
+
+    await otpEntry.save();
+
+    // Send OTP via email
+    await sendOtpEmail(email, otpValue);
+
+    res.status(200).json({ message: "OTP resent to email." });
+  } catch (error) {
+    console.error("Resend OTP Error:", error);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+};
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log("dd");
+  // console.log("dd");
   try {
     // Find the user by email
     const foundUser = await userModel.findOne({ email });
@@ -92,6 +192,12 @@ const loginUser = async (req, res) => {
       "b0742345623214e7f5aac75a4200799d80b55d26a62b97cd23015c33ae3ac11513e2e7",
       { expiresIn: 600 } // Token expires in 10 minutes
     );
+    res.cookie("authToken", authToken, {
+      httpOnly: true, // This ensures that the cookie is not accessible via JavaScript (for security)
+      secure: true, // Use secure cookies in production (HTTPS)
+      maxAge: 10 * 60 * 1000, // 10 minutes
+      sameSite: "Strict", // Protect against CSRF attacks
+    });
 
     // Send the userId and user data back to the frontend
     return res.status(200).json({
@@ -105,4 +211,95 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser };
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      // To prevent email enumeration, respond with the same message
+      return res.status(200).json({
+        message:
+          "you will receive a Email Regarding password reset link shortly.",
+      });
+    }
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    // Hash the token before saving to the database
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    // Set token and expiration on user model
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    // Create reset URL
+    const resetURL = `${process.env.LOCALURL}/resetPassword/${resetToken}`;
+    await resetMailOptions(email, resetURL);
+
+    // Email content
+
+    res.status(200).json({
+      message:
+        "If this email is registered, you will receive a password reset link shortly.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+const updateNewPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    // Hash the token to compare with the stored hash
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Find user with matching token and valid expiration
+    const user = await userModel.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired password reset token.",
+      });
+    }
+
+    // Update user's password
+     const salt = await bcrypt.genSalt(10);
+     const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword; // This will trigger the pre-save hook to hash the password
+    // Remove reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.status(200).json({
+      message: "Password has been reset successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+module.exports = {
+  createUser,
+  loginUser,
+  verifyOtp,
+  resendOtp,
+  forgotPassword,
+  updateNewPassword,
+};

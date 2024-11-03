@@ -3,7 +3,10 @@ const Sports = require("../models/Sports");
 const Courts = require("../models/Courts");
 const mongoose = require("mongoose");
 const Bookings = require("../models/Bookings");
+const User = require("../models/Users");
 const moment = require("moment");
+const { createBookingEmail } = require("../utils/bookingEmailContent");
+const bookingEmail = require("../mailer/bookingEmail");
 const getCentres = async (req, res) => {
   try {
     const centres = await Centres.find();
@@ -46,7 +49,7 @@ const getCentreSports = async (req, res) => {
 const getAvailableCourts = async (req, res) => {
   const { centreId, sportId } = req.params; // Get centre ID and sport ID from request parameters
   const { date } = req.query; // Get date from query parameters
-  console.log(centreId, sportId, date);
+  // console.log(centreId, sportId, date);
   // Validate input
   if (!date) {
     return res
@@ -201,26 +204,34 @@ const getAvailableSlots = async (req, res) => {
         $gte: startOfDay,
         $lte: endOfDay,
       },
+    }).populate("user", "name email"); // Populate user info (name, email)
+
+    // *5. Map Time Slots with Booking Status and Booked By*
+    const allSlots = timeSlots.map((slot) => {
+      const booking = existingBookings.find(
+        (booking) => booking.startTime === slot.startTime
+      );
+
+      return {
+        ...slot,
+        booked: !!booking, // true if the slot is booked, false otherwise
+        bookedBy: booking
+          ? {
+              name: booking.user.name, // Adding bookedBy details if slot is booked
+              email: booking.user.email,
+            }
+          : null, // null if slot is not booked
+      };
     });
 
-    // Extract booked start times
-    const bookedStartTimes = existingBookings.map(
-      (booking) => booking.startTime
-    );
-
-    // *5. Determine Available Slots*
-    const availableSlots = timeSlots.filter(
-      (slot) => !bookedStartTimes.includes(slot.startTime)
-    );
-
-    // *6. Respond with Available Slots*
+    // *6. Respond with All Slots*
     return res.status(200).json({
       success: true,
       date: date,
       centre: centre,
       sport: sport,
       court: court,
-      availableSlots: availableSlots,
+      availableSlots: allSlots, // Include all slots with booking status and bookedBy info
     });
   } catch (error) {
     console.error("Error in getAvailableSlots:", error);
@@ -252,9 +263,34 @@ const booking = async (req, res) => {
       user: mongoose.Types.ObjectId(userId), // Assuming you have the user ID in the request body
     });
 
-    // Save the booking
-    await newBooking.save();
+    const [centre1, sport1, user1, court1] = await Promise.all([
+      Centres.findById(centreId),
+      Sports.findById(sportId),
+      User.findById(userId),
+      Courts.findById(courtId),
+    ]);
 
+    if (!centre1 || !sport1 || !user1 | !court1) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Centre, Sport, or User ID provided",
+      });
+    }
+
+    // Save the booking
+    const savedBooking = await newBooking.save();
+    const bookingDetails = {
+      centreName: centre1.name,
+      sportName: sport1.name,
+      courtName: court1.name, // Assuming courtId is a string. If you have a Court model, fetch the name similarly.
+      date: savedBooking.date,
+      startTime: savedBooking.startTime,
+      endTime: savedBooking.endTime,
+    };
+
+    // Create the email content
+    const emailContent = createBookingEmail(user1.name, bookingDetails);
+    await bookingEmail(user1.email, emailContent);
     res.status(201).json({
       success: true,
       message: "Court booked successfully",
@@ -269,12 +305,119 @@ const booking = async (req, res) => {
     });
   }
 };
+
+//add centre
+
+const addCentre = async (req, res) => {
+  const { name, location } = req.body;
+  try {
+    const newCentre = new Centres({ name, location });
+    await newCentre.save();
+    res.status(201).json({ message: "Centre added successfully", newCentre });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error adding centre", error: err.message });
+  }
+};
+
+//add sport at the centres
+const addSport = async (req, res) => {
+  const { centreId, sportName } = req.params;
+  // console.log("dsss");
+  try {
+    // Step 1: Find the center by ID
+    const centre = await Centres.findById(centreId);
+    if (!centre) {
+      return res.status(404).json({ message: "Centre not found" });
+    }
+
+    // Step 2: Create the new sport and associate it with the centre
+    const newSport = new Sports({
+      name: sportName,
+      centre: centreId,
+    });
+
+    // Step 3: Save the new sport
+    const savedSport = await newSport.save();
+
+    // Step 4: Update the centre's sports array with the new sport ID
+    centre.sports.push(savedSport._id);
+    await centre.save();
+
+    // Step 5: Return a success response
+    res.status(200).json({
+      message: "Sport added to the centre successfully",
+      sport: savedSport,
+    });
+  } catch (error) {
+    console.error("Error adding sport to centre:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//get sports at centre
+const getSportsAtCentre = async (req, res) => {
+  try {
+    const { centreId } = req.params;
+
+    // Find the centre by ID and populate the sports field
+    const centre = await Sports.find({ centre: centreId });
+
+    if (!centre) {
+      return res.status(404).json({ message: "Centre not found" });
+    }
+
+    //  console.log(centre);
+    res.json(centre); // Send back the sports data
+  } catch (err) {
+    console.error("Error fetching sports:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const addCourt = async (req, res) => {
+  const { selectedSport } = req.params;
+  const { name } = req.body;
+
+  try {
+    // Check if the sport exists
+    const sport = await Sports.findById(selectedSport);
+    if (!sport) {
+      return res.status(404).json({ message: "Sport not found" });
+    }
+
+    // Create the new court
+    const court = new Courts({
+      name,
+      sport: selectedSport,
+    });
+    await court.save();
+
+    // Add the court to the sport's court list
+    sport.courts.push(court._id);
+    await sport.save();
+
+    res.status(201).json({
+      message: "Court added successfully",
+      court,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding court",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCentres,
   getCentreSports,
   getAvailableCourts,
   getAvailableSlots,
   booking,
+  addCentre,
+  addSport,
+  getSportsAtCentre,
+  addCourt,
 };
-
-

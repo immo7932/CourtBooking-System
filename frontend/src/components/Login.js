@@ -1,21 +1,49 @@
-import React, { useState } from "react";
+// Login.js
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-const URL = " https://games-theory-frontend.vercel.app";
-const LOCALURL = "http://localhost:8080";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  Backdrop,
+  CircularProgress,
+  Alert,
+  Divider,
+} from "@mui/material";
+import { useNavigate, Link } from "react-router-dom";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import GoogleIcon from "mdi-material-ui/Google"; // Import GoogleIcon
+
+
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // Added for error handling
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate(); // Initialize useNavigate
+
+  // Function to clear the error message after 4 seconds
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 4000); // Clear error message after 4 seconds
+
+      return () => clearTimeout(timer); // Clean up the timer if component unmounts
+    }
+  }, [errorMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage(""); // Reset error message before new submission
+    setLoading(true); // Start loader
 
     try {
       const response = await axios.post(
-        `https://games-theory-frontend.vercel.app/api/auth/login`,
+        `${process.env.GLOBALURL}/api/auth/login`,
         {
           email,
           password,
@@ -25,8 +53,9 @@ const Login = () => {
       console.log("Login successful", response.data);
 
       // Save user ID and authToken in local storage
-      localStorage.setItem("userId", response.data.userId); // userId1 from the backend response
-      localStorage.setItem("authToken", response.data.authToken); // Store the authToken if needed
+      localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("authToken", response.data.authToken);
+      localStorage.setItem("userRole", response.data.user.role);
 
       // Redirect to the home page
       navigate("/home");
@@ -34,7 +63,7 @@ const Login = () => {
       if (error.response) {
         // Handle specific status codes
         if (error.response.status === 401) {
-          setErrorMessage("Invalid email or password."); // Show the error from the backend
+          setErrorMessage("Invalid email or password.");
         } else if (error.response.status === 500) {
           setErrorMessage("Server error. Unable to login. Please try again.");
         } else {
@@ -50,6 +79,8 @@ const Login = () => {
         // Other errors
         setErrorMessage(error.message);
       }
+    } finally {
+      setLoading(false); // Stop loader
     }
 
     // Clear the form
@@ -58,108 +89,107 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Login</h2>
+    <Container component="main" maxWidth="xs">
+      {/* Loader */}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
-      {/* Display error message if any */}
-      {errorMessage && <div style={styles.error}>{errorMessage}</div>}
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography component="h1" variant="h4" gutterBottom>
+          Login
+        </Typography>
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Email:</label>
-          <input
-            type="email"
+        {/* Display error message if any */}
+        {errorMessage && (
+          <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            fullWidth
+            required
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
           />
-        </div>
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Password:</label>
-          <input
+
+          <TextField
+            margin="normal"
+            fullWidth
+            required
+            name="password"
+            label="Password"
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
           />
-        </div>
-        <button type="submit" style={styles.button}>
-          Login
-        </button>
-      </form>
-      <p style={styles.footer}>
-        Don't have an account?{" "}
-        <a href="/register" style={styles.link}>
-          Register here
-        </a>
-      </p>
-    </div>
-  );
-};
 
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#f4f4f4",
-    fontFamily: "'Arial', sans-serif",
-  },
-  title: {
-    marginBottom: "20px",
-    color: "#333",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: "300px",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "white",
-  },
-  inputGroup: {
-    marginBottom: "15px",
-  },
-  label: {
-    marginBottom: "5px",
-    fontWeight: "bold",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    fontSize: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    transition: "border-color 0.3s",
-  },
-  button: {
-    padding: "10px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "16px",
-    transition: "background-color 0.3s",
-  },
-  footer: {
-    marginTop: "20px",
-    color: "#666",
-  },
-  link: {
-    color: "#007bff",
-    textDecoration: "none",
-  },
-  error: {
-    color: "red",
-    marginBottom: "15px",
-    fontWeight: "bold",
-  },
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={loading}
+            sx={{ mt: 3, mb: 2 }}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+
+          {/* Forgot Password Link */}
+          <Typography variant="body2" align="right">
+            <Link to="/forgotPassword" style={{ textDecoration: "none" }}>
+              Forgot Password?
+            </Link>
+          </Typography>
+
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            Don't have an account?{" "}
+            <Link to="/register" style={{ textDecoration: "none" }}>
+              Register here
+            </Link>
+          </Typography>
+        </Box>
+
+        {/* Divider */}
+        <Divider sx={{ my: 2, width: "100%" }}>OR</Divider>
+
+        {/* Social Sign-In Buttons */}
+        <Button
+          fullWidth
+          variant="outlined"
+          startIcon={<GoogleIcon />}
+          sx={{ mb: 1 }}
+        >
+          Sign in with Google
+        </Button>
+
+        <Button
+          fullWidth
+          variant="outlined"
+          startIcon={<FacebookIcon sx={{ color: "#4267B2" }} />}
+        >
+          Sign in with Facebook
+        </Button>
+      </Box>
+    </Container>
+  );
 };
 
 export default Login;

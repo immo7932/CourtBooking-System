@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false, // User is not verified by default
+    },
 
     role: {
       type: String,
@@ -25,7 +29,14 @@ const UserSchema = new mongoose.Schema(
       default: "customer", // Default role is 'customer'
       required: true,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
+
   { timestamps: true }
 ); // Adds createdAt and updatedAt fields
 
@@ -43,4 +54,4 @@ UserSchema.statics.findAndValidate = async function (email, password) {
   return null;
 };
 
-module.exports = mongoose.model("Users", UserSchema);
+module.exports = mongoose.model("User", UserSchema);
