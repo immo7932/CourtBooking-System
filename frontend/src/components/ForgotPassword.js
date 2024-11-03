@@ -40,15 +40,16 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      console.log(API_URL)
+      console.log(API_URL);
       console.log("hh");
       const response = await axios.post(
-        `${API_URL}/api/auth/forgotPassword`,
+        `https://gamestheory1.onrender.com
+/api/auth/forgotPassword`,
         {
           email,
         }
       );
-    //  console.log(response)
+      //  console.log(response)
       setMessage(
         "If this email is registered, you will receive a password reset link shortly."
       );
