@@ -18,7 +18,7 @@ import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const AddCourt = () => {
@@ -47,7 +47,7 @@ const AddCourt = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -58,7 +58,7 @@ const AddCourt = () => {
   const fetchSports = async (centreId) => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/${centreId}/sports`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/${centreId}/sports`
       );
       setSports(res.data.sports || []);
     } catch (err) {
@@ -82,7 +82,7 @@ const AddCourt = () => {
     axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-court/${selectedSport}`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
         },

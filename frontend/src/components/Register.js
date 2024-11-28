@@ -22,7 +22,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 
@@ -84,7 +84,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/auth/createuser/`,
+        `${process.env.REACT_APP_GLOBALURL}/api/auth/createuser/`,
         {
           name,
           email,
@@ -133,7 +133,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/auth/verifyOtp`,
+        `${process.env.REACT_APP_GLOBALURL}/api/auth/verifyOtp`,
         {
           email,
           otp,
@@ -181,7 +181,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/auth/resendOtp`,
+        `${process.env.REACT_APP_GLOBALURL}/api/auth/resendOtp`,
         {
           email,
         }

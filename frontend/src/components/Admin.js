@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const AdminPage = () => {
@@ -43,7 +43,7 @@ const AdminPage = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getCentres`
       );
       setCentres(res.data);
     } catch (err) {
@@ -59,7 +59,7 @@ const AdminPage = () => {
     try { 
       console.log(selectedCentre+"dcds");
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getSports/${selectedCentre}`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getSports/${selectedCentre}`
       );
       console.log(res.data);
       setSportAtCentre(res.data);
@@ -77,7 +77,7 @@ const AdminPage = () => {
   const addCentre = async () => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-centres`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-centres`,
         {
           name: centreName,
           location,
@@ -97,7 +97,7 @@ const AdminPage = () => {
     if (!selectedCentre) return;
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
         {
           name: sportName,
         }
@@ -115,7 +115,7 @@ const AdminPage = () => {
     if (!selectedSport) return;
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-court/${selectedSport}`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
         }

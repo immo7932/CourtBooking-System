@@ -18,7 +18,7 @@ import GoogleIcon from "mdi-material-ui/Google"; // Import GoogleIcon
 
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const Login = () => {
@@ -48,7 +48,7 @@ const Login = () => {
     try {
       console.log(process.env.LOCALURL)
       const response = await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/auth/login`,
+        `${process.env.REACT_APP_GLOBALURL}/api/auth/login`,
         {
           email,
           password,

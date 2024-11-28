@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const ForgotPassword = () => {
@@ -43,7 +43,7 @@ const ForgotPassword = () => {
       console.log(API_URL);
       console.log("hh");
       const response = await axios.post(
-        `${process.env.REACT_APP_LOCALURL}
+        `${process.env.REACT_APP_GLOBALURL}
 /api/auth/forgotPassword`,
         {
           email,

@@ -18,7 +18,7 @@ import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const AddSport = () => {
@@ -45,7 +45,7 @@ const AddSport = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -69,7 +69,7 @@ const AddSport = () => {
     axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
         {
           name: "Jabalpur",
         },

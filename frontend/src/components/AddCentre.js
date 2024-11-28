@@ -13,7 +13,7 @@ import {
 import Sidebar from "./Sidebar";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const AddCentre = () => {
@@ -35,7 +35,7 @@ const AddCentre = () => {
     axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/add-centres`,
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/add-centres`,
         {
           name: centreName,
           location,

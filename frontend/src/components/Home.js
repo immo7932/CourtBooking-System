@@ -26,7 +26,7 @@ import Sidebar from "./Sidebar"; // Import the Sidebar component
 import { Link } from "react-router-dom";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const Home = () => {
@@ -79,7 +79,7 @@ const Home = () => {
   const fetchAllUsers = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getAllUsers/`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getAllUsers/`
       );
       console.log(res);
       setUsers(res.data.count);
@@ -100,7 +100,7 @@ const Home = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres/`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/getCentres/`
       );
 
       setCentres(res.data.centres);
@@ -117,7 +117,7 @@ const Home = () => {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/users/getAllUsers/`
+        `${process.env.REACT_APP_GLOBALURL}/api/users/getAllUsers/`
       );
       setUsers(res.data.users);
     } catch (err) {
@@ -145,7 +145,7 @@ const Home = () => {
       try {
         console.log(API_URL);
         const res = await axios.get(
-          `${process.env.REACT_APP_LOCALURL}/api/centres/${centre._id}/sports`
+          `${process.env.REACT_APP_GLOBALURL}/api/centres/${centre._id}/sports`
         );
         setSports(res.data.sports);
       } catch (err) {
@@ -169,7 +169,7 @@ const Home = () => {
     if (!selectedSport || !selectedDate) return;
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/courts/${selectedCentre._id}/sport/${selectedSport._id}/available?date=${selectedDate}`
       );
       setAvailableCourts(res.data.availableCourts);
     } catch (err) {
@@ -183,7 +183,7 @@ const Home = () => {
 
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_LOCALURL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
+        `${process.env.REACT_APP_GLOBALURL}/api/centres/${selectedCentre._id}/${selectedSport._id}/${courtId}/${selectedDate}/timeslots`
       );
       console.log(res.data);
       setAvailableSlots(res.data.availableSlots);
@@ -231,7 +231,7 @@ const Home = () => {
     const getToken = localStorage.getItem("authToken");
     //console.log(getToken);
     axios.defaults.withCredentials = true;
-    const bookingUrl = `${process.env.REACT_APP_LOCALURL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
+    const bookingUrl = `${process.env.REACT_APP_GLOBALURL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
     try {
       const res = await axios.post(
         bookingUrl,

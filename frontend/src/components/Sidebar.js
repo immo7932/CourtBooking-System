@@ -34,7 +34,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 const drawerWidth = 240;

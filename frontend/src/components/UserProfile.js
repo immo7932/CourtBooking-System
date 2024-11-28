@@ -20,7 +20,7 @@ import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_LOCALURL
+    ? process.env.REACT_APP_GLOBALURL
     : process.env.REACT_APP_GLOBALURL;
 
 
@@ -42,14 +42,14 @@ const UserProfile = () => {
     const fetchData = async () => {
       try {
         const userResponse = await axios.get(
-          `${process.env.REACT_APP_LOCALURL}/api/User/getUserDetailS/${userId}`
+          `${process.env.REACT_APP_GLOBALURL}/api/User/getUserDetailS/${userId}`
         );
         setUser(userResponse.data);
 
         // If user is a customer, fetch bookings
         if (userResponse.data.role === "customer") {
           const bookingsResponse = await axios.get(
-            `${process.env.REACT_APP_LOCALURL}/api/User/getBookingDetailS/${userId}`
+            `${process.env.REACT_APP_GLOBALURL}/api/User/getBookingDetailS/${userId}`
           );
           setBookings(bookingsResponse.data);
         }
