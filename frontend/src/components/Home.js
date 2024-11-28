@@ -230,7 +230,7 @@ const Home = () => {
     setLoading(true); // Start loading
     const getToken = localStorage.getItem("authToken");
     //console.log(getToken);
-    axios.defaults.withCredentials = true;
+  
     const bookingUrl = `${process.env.REACT_APP_GLOBALURL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
     try {
       const res = await axios.post(
