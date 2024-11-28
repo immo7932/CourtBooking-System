@@ -31,7 +31,7 @@ main().catch((err) => console.log(err));
 // CORS Configuration
 app.use(
   cors({
-    origin: "http://localhost:3000", // Replace with your frontend's origin
+    origin: "https://courtbooking-system.onrender.com", // Replace with your frontend's origin
     credentials: true, // Allow cookies to be sent
   })
 );
