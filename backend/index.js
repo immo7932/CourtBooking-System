@@ -28,8 +28,13 @@ async function main() {
 }
 main().catch((err) => console.log(err));
 
-// CORS Configuration
-app.use(cors())
+const corsOptions = {
+  origin: 'https://court-booking-system.vercel.app', // Replace with your actual frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add necessary methods here
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(cookieParser());
