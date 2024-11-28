@@ -25,7 +25,7 @@ router.post("/add-court/:selectedSport", verifyAdmin, addCourt);
 router.get("/getAllUsers", getAllUsers);
 router.post("/add-sport/:centreId/:sportName", verifyAdmin, addSport);
 router.post(
-  "/book/:centreId/:sportId/:courtId/:startTime/:endTime/:date/:userId",
+  "/book/:centreId/:sportId/:courtId/:startTime/:endTime/:date/:userId",verifyUser,
   booking
 );
 router.post("/add-centres", verifyAdmin, addCentre);
