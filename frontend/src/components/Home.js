@@ -234,16 +234,16 @@ const Home = () => {
     const bookingUrl = `${process.env.REACT_APP_GLOBALURL}/api/centres/book/${selectedCentre._id}/${selectedSport._id}/${selectedCourt._id}/${startTime}/${endTime}:00/${selectedDate}/${userId}`;
     try {
       const res = await axios.post(
-        bookingUrl,
-        {
-          name: "Jabalpur",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken}`, // Sending token in Authorization header
-          },
-          withCredentials: true,
-        }
+         bookingUrl
+        // {
+        //   name: "Jabalpur",
+        // },
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${getToken}`, // Sending token in Authorization header
+        //   },
+        //   withCredentials: true,
+        // }
       );
       console.log("Booking response:", res.data);
       setSnackbar({
