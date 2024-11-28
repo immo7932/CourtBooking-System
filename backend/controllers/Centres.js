@@ -288,6 +288,9 @@ const booking = async (req, res) => {
       endTime: savedBooking.endTime,
     };
 
+
+
+    
     // Create the email content
     const emailContent = createBookingEmail(user1.name, bookingDetails);
     await bookingEmail(user1.email, emailContent);
@@ -410,6 +413,17 @@ const addCourt = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    // Count all users where the role is not 'manager'
+    const count = await User.countDocuments({ role: { $ne: "manager" } });
+    res.status(200).json({ count });
+  } catch (err) {
+    console.error("Error fetching user count:", err);
+    res.status(500).json({ message: "Error fetching user count" });
+  }
+};
+
 module.exports = {
   getCentres,
   getCentreSports,
@@ -420,4 +434,5 @@ module.exports = {
   addSport,
   getSportsAtCentre,
   addCourt,
+  getAllUsers,
 };

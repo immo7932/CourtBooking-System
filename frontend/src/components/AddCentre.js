@@ -17,7 +17,6 @@ const API_URL =
     : process.env.REACT_APP_GLOBALURL;
 
 const AddCentre = () => {
- 
   const [centreName, setCentreName] = useState("");
   const [location, setLocation] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -30,14 +29,22 @@ const AddCentre = () => {
     setSnackbarOpen(true);
   };
 
-
   const addCentre = async () => {
+    const getToken = localStorage.getItem("authToken");
+    //console.log(getToken);
+    axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `https://gamestheory1.onrender.com/api/centres/add-centres`,
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-centres`,
         {
           name: centreName,
           location,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken}`, // Sending token in Authorization header
+          },
+          withCredentials: true,
         }
       );
       setCentreName("");

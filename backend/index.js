@@ -1,3 +1,5 @@
+// server.js or app.js
+
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -7,46 +9,56 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoute = require("./routes/auth");
 
+
 const centres = require("./routes/centres");
 const createBooking = require("./routes/createBooking");
-const Users = require("./models/Users");
+const Users1 = require("./routes/users"); // Corrected route import
 
-const Users1=require("./routes/users")
-// express init
+// Express initialization
 const app = express();
-// mongoose init
 
+// Mongoose initialization
 const dbUrl = process.env.DB_URL;
 async function main() {
-  await mongoose.connect(dbUrl);
+  await mongoose.connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
   console.log("Database connected");
 }
 main().catch((err) => console.log(err));
 
-app.use(cors());
+// CORS Configuration
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace with your frontend's origin
+    credentials: true, // Allow cookies to be sent
+  })
+);
+
+// Middleware
 app.use(cookieParser());
-// middleware
 app.use(express.json());
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Hello wprld");
+  res.send("Hello world");
 });
 
 app.use("/api/auth", authRoute);
 app.use("/api/centres", centres);
 app.use("/api/createBooking", createBooking);
 app.use("/api/User", Users1);
-// error handling middleware
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";
-  res.status(statusCode).json({ success: false, message: err.message }); //For development
+  res.status(statusCode).json({ success: false, message: err.message });
 });
 
+// Start the server
 const port = process.env.PORT || 8080;
-app.listen(port, (req, res) => {
-  console.log("Listening to the port 8080");
+app.listen(port, () => {
+  console.log(`Listening to the port ${port}`);
 });
-

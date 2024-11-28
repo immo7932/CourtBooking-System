@@ -21,6 +21,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.19.2",
     "formik": "^2.2.9",
+    "frontend": "file:",
     "history": "^5.1.0",
     "mdi-material-ui": "^7.9.2",
     "mongoose": "^8.5.1",

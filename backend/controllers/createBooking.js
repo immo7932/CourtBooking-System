@@ -171,6 +171,4 @@ const isValidStartTime = (startTime) => {
   );
 };
 
-
-
 module.exports = { getAvailableSlots, createBooking };

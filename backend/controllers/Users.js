@@ -6,18 +6,18 @@ const Bookings = require("../models/Bookings");
 const User = require("../models/Users");
 const moment = require("moment");
 
-
 const getUserDetails = async (req, res) => {
   const UserId1 = req.params.userId1;
   //console.log("s");
   try {
     const user = await User.findById(UserId1);
-   // console.log(user)
+    // console.log(user)
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch user data" });
   }
 };
+
 
 const getBookingDetails = async (req, res) => {
   try {
@@ -46,8 +46,6 @@ const getBookingDetails = async (req, res) => {
         year: "numeric",
       }).format(date);
 
-
-      
       // Format start and end times to IST (HH:MM AM/PM format)
       const startTimeIST = new Date(
         `1970-01-01T${booking.startTime}:00Z`

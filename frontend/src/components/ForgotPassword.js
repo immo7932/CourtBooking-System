@@ -43,7 +43,7 @@ const ForgotPassword = () => {
       console.log(API_URL);
       console.log("hh");
       const response = await axios.post(
-        `https://gamestheory1.onrender.com
+        `${process.env.REACT_APP_LOCALURL}
 /api/auth/forgotPassword`,
         {
           email,

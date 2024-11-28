@@ -76,21 +76,21 @@ const Sidebar = (props) => {
           <ListItemText primary="Home" />
         </ListItem>
 
-        {/* About */}
+        {/* About
         <ListItem button component={Link} to="/about" key="About">
           <ListItemIcon>
             <InfoIcon />
           </ListItemIcon>
           <ListItemText primary="About" />
-        </ListItem>
+        </ListItem> */}
 
         {/* Contact */}
-        <ListItem button component={Link} to="/contact" key="Contact">
+        {/* <ListItem button component={Link} to="/contact" key="Contact">
           <ListItemIcon>
             <ContactMailIcon />
           </ListItemIcon>
           <ListItemText primary="Contact" />
-        </ListItem>
+        </ListItem> */}
 
         {/* Options */}
         <ListItem button onClick={handleOptionsClick}>
@@ -104,7 +104,7 @@ const Sidebar = (props) => {
           <List component="div" disablePadding>
             {userType !== "customer" && (
               <>
-                <ListItem button component={Link} to="/bookings" sx={{ pl: 4 }}>
+                {/* <ListItem button component={Link} to="/bookings" sx={{ pl: 4 }}>
                   <ListItemIcon>
                     <BookIcon />
                   </ListItemIcon>
@@ -115,7 +115,7 @@ const Sidebar = (props) => {
                     <LocationOnIcon />
                   </ListItemIcon>
                   <ListItemText primary="Find Centres" />
-                </ListItem>
+                </ListItem> */}
                 <Divider />
               </>
             )}

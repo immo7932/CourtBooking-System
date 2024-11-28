@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Otp = require("../models/Otp.js");
+const middleWare1 = require("../middlewareAdmin.js");
 
 const sendOtpEmail = require("../mailer/sendOtpEmail.js");
 const resetMailOptions = require("../mailer/resetPasswordMail.js");
@@ -161,7 +162,6 @@ const resendOtp = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  // console.log("dd");
   try {
     // Find the user by email
     const foundUser = await userModel.findOne({ email });
@@ -176,48 +176,51 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    // Extract the userId and any other data you want to send
-    const userId1 = foundUser._id;
+    // Extract the userId and other necessary data
+    const userId = foundUser._id;
     const userData = {
-      id: userId1,
-      name: foundUser.name, // Include the user's name
-      email: foundUser.email, // Include the user's email
-      role: foundUser.role, // Include the user's role (if applicable)
-      // Add more fields as needed
+      id: userId,
+      name: foundUser.name,
+      email: foundUser.email,
+      role: foundUser.role, // Ensure the role is included
     };
 
-    const data = {
-      user: { id: userId1 },
+    // Include role in the JWT payload
+    const payload = {
+      user: {
+        id: userId,
+        role: foundUser.role, // Include role here
+      },
     };
 
     const authToken = jwt.sign(
-      data,
-      "b0742345623214e7f5aac75a4200799d80b55d26a62b97cd23015c33ae3ac11513e2e7",
-      { expiresIn: 600 } // Token expires in 10 minutes
+      payload,
+      "b0742345623214e7f5aac75a4200799d80b55d26a62b97cd23015c33ae3ac11513e2e7", // Consider using environment variables
+      { expiresIn: "59m" } // Token expires in 10 minutes
     );
+
     res.cookie("authToken", authToken, {
-      httpOnly: true, // This ensures that the cookie is not accessible via JavaScript (for security)
-      secure: true, // Use secure cookies in production (HTTPS)
-      maxAge: 10 * 60 * 1000, // 10 minutes
-      sameSite: "Strict", // Protect against CSRF attacks
+      httpOnly: true, // Not accessible via JavaScript
+      secure: false, // Use secure cookies in production
+      maxAge: 10 * 60 * 1000 * 60, // 10 minutes
+      sameSite: "None", // Protect against CSRF
     });
+    // console.log(res.cookie);
 
     // Send the userId and user data back to the frontend
     return res.status(200).json({
       success: true,
-      userId: userId1,
+      userId: userId,
       authToken,
-      user: userData, // Send the user data back
+      user: userData,
     });
   } catch (err) {
+    console.error(err); // Log the error for debugging
     return res.status(500).json({ error: "Server error. Unable to login." });
   }
 };
 
-
-
 const forgotPassword = async (req, res) => {
-  console.log("eee");
   const { email } = req.body;
 
   try {
@@ -230,6 +233,7 @@ const forgotPassword = async (req, res) => {
           "you will receive a Email Regarding password reset link shortly.",
       });
     }
+
     // Generate a reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
     // Hash the token before saving to the database
@@ -282,8 +286,8 @@ const updateNewPassword = async (req, res) => {
     }
 
     // Update user's password
-     const salt = await bcrypt.genSalt(10);
-     const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     user.password = hashedPassword; // This will trigger the pre-save hook to hash the password
     // Remove reset token fields

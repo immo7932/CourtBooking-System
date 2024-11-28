@@ -84,7 +84,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `https://gamestheory1.onrender.com/api/auth/createuser/`,
+        `${process.env.REACT_APP_LOCALURL}/api/auth/createuser/`,
         {
           name,
           email,
@@ -133,7 +133,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `https://gamestheory1.onrender.com/api/auth/verifyOtp`,
+        `${process.env.REACT_APP_LOCALURL}/api/auth/verifyOtp`,
         {
           email,
           otp,
@@ -181,7 +181,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `https://gamestheory1.onrender.com/api/auth/resendOtp`,
+        `${process.env.REACT_APP_LOCALURL}/api/auth/resendOtp`,
         {
           email,
         }
@@ -318,13 +318,13 @@ const Register = () => {
             </Typography>
 
             {/* Divider */}
-            <Divider sx={{ my: 3, width: "100%" }}>OR</Divider>
+            {/* <Divider sx={{ my: 3, width: "100%" }}>OR</Divider> */}
 
             {/* Social Sign-In Buttons */}
             <Box
               sx={{ width: "100%", display: "flex", flexDirection: "column" }}
             >
-              <Button
+              {/* <Button
                 fullWidth
                 variant="outlined"
                 startIcon={<GoogleIcon />}
@@ -341,7 +341,7 @@ const Register = () => {
                 // onClick={handleFacebookSignIn} // Implement when ready
               >
                 Sign in with Facebook
-              </Button>
+              </Button> */}
             </Box>
           </Box>
         )}

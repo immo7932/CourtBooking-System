@@ -21,9 +21,7 @@ const API_URL =
     ? process.env.REACT_APP_LOCALURL
     : process.env.REACT_APP_GLOBALURL;
 
-
 const AddCourt = () => {
-  
   const [centres, setCentres] = useState([]);
   const [sports, setSports] = useState([]);
   const [selectedCentre, setSelectedCentre] = useState("");
@@ -49,7 +47,7 @@ const AddCourt = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `https://gamestheory1.onrender.com/api/centres/getCentres`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -60,7 +58,7 @@ const AddCourt = () => {
   const fetchSports = async (centreId) => {
     try {
       const res = await axios.get(
-        `https://gamestheory1.onrender.com/api/centres/${centreId}/sports`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/${centreId}/sports`
       );
       setSports(res.data.sports || []);
     } catch (err) {
@@ -79,11 +77,20 @@ const AddCourt = () => {
       showMessage("Please fill in all fields", "warning");
       return;
     }
+    const getToken = localStorage.getItem("authToken");
+    //console.log(getToken);
+    axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `https://gamestheory1.onrender.com/api/centres/add-court/${selectedSport}`,
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken}`, // Sending token in Authorization header
+          },
+          withCredentials: true,
         }
       );
       setCourtName("");

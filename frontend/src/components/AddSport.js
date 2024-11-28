@@ -22,7 +22,6 @@ const API_URL =
     : process.env.REACT_APP_GLOBALURL;
 
 const AddSport = () => {
- 
   const [centres, setCentres] = useState([]);
   const [selectedCentre, setSelectedCentre] = useState("");
   const [sportName, setSportName] = useState("");
@@ -46,7 +45,7 @@ const AddSport = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `https://gamestheory1.onrender.com/api/centres/getCentres`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
       );
       setCentres(res.data.centres || []);
     } catch (err) {
@@ -65,9 +64,21 @@ const AddSport = () => {
       showMessage("Please fill in all fields", "warning");
       return;
     }
+    const getToken = localStorage.getItem("authToken");
+    console.log(getToken);
+    axios.defaults.withCredentials = true;
     try {
       await axios.post(
-        `https://gamestheory1.onrender.com/api/centres/add-sport/${selectedCentre}/${sportName}`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
+        {
+          name: "Jabalpur",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken}`, // Sending token in Authorization header
+          },
+          withCredentials: true,
+        }
       );
       setSportName("");
       showMessage("Sport added successfully", "success");

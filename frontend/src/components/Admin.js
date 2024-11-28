@@ -43,7 +43,7 @@ const AdminPage = () => {
   const fetchCentres = async () => {
     try {
       const res = await axios.get(
-        `https://gamestheory1.onrender.com/api/centres/getCentres`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/getCentres`
       );
       setCentres(res.data);
     } catch (err) {
@@ -59,7 +59,7 @@ const AdminPage = () => {
     try { 
       console.log(selectedCentre+"dcds");
       const res = await axios.get(
-        `https://gamestheory1.onrender.com/api/centres/getSports/${selectedCentre}`
+        `${process.env.REACT_APP_LOCALURL}/api/centres/getSports/${selectedCentre}`
       );
       console.log(res.data);
       setSportAtCentre(res.data);
@@ -76,10 +76,13 @@ const AdminPage = () => {
 
   const addCentre = async () => {
     try {
-      await axios.post(`https://gamestheory1.onrender.com/api/centres/add-centres`, {
-        name: centreName,
-        location,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-centres`,
+        {
+          name: centreName,
+          location,
+        }
+      );
       setCentreName("");
       setLocation("");
       fetchCentres(); // refresh centres list
@@ -94,7 +97,7 @@ const AdminPage = () => {
     if (!selectedCentre) return;
     try {
       await axios.post(
-        `https://gamestheory1.onrender.com/api/centres/add-sport/${selectedCentre}/${sportName}`,
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-sport/${selectedCentre}/${sportName}`,
         {
           name: sportName,
         }
@@ -112,7 +115,7 @@ const AdminPage = () => {
     if (!selectedSport) return;
     try {
       await axios.post(
-        `https://gamestheory1.onrender.com/api/centres/add-court/${selectedSport}`,
+        `${process.env.REACT_APP_LOCALURL}/api/centres/add-court/${selectedSport}`,
         {
           name: courtName,
         }

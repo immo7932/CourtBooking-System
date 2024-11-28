@@ -48,7 +48,7 @@ const Login = () => {
     try {
       console.log(process.env.LOCALURL)
       const response = await axios.post(
-        `https://gamestheory1.onrender.com/api/auth/login`,
+        `${process.env.REACT_APP_LOCALURL}/api/auth/login`,
         {
           email,
           password,
@@ -174,10 +174,10 @@ const Login = () => {
         </Box>
 
         {/* Divider */}
-        <Divider sx={{ my: 2, width: "100%" }}>OR</Divider>
+        {/* <Divider sx={{ my: 2, width: "100%" }}>OR</Divider> */}
 
         {/* Social Sign-In Buttons */}
-        <Button
+        {/* <Button
           fullWidth
           variant="outlined"
           startIcon={<GoogleIcon />}
@@ -192,7 +192,7 @@ const Login = () => {
           startIcon={<FacebookIcon sx={{ color: "#4267B2" }} />}
         >
           Sign in with Facebook
-        </Button>
+        </Button> */}
       </Box>
     </Container>
   );

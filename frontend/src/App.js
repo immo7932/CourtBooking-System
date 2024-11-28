@@ -18,6 +18,8 @@ import AdminPage from "./components/Admin";
 import UserProfile from "./components/UserProfile";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+import ManageCentres from "./components/ManageCentres";
+import LandingPage from "./components/Landing";
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
       <NoteProvider>
         <AlertProvider>
           <Routes>
+          <Route path="/" index element={<LandingPage />} />
             <Route path="/home" index element={<Home />} />
             <Route path="/register" index element={<Register />} />
             <Route path="/login" index element={<Login />} />
@@ -34,8 +37,8 @@ function App() {
             <Route path="/userProfile" index element={<UserProfile />} />
             <Route path="/addCourt" index element={<AddCourt />} />
             <Route path="/forgotPassword" index element={<ForgotPassword />} />
-
-            <Route path="/resetPassword/:token"  element={<ResetPassword />} />
+            <Route path="/ManageCentres" index element={<ManageCentres />} />
+            <Route path="/resetPassword/:token" element={<ResetPassword />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </AlertProvider>
