@@ -1,7 +1,3 @@
-Here is a README template for your Court Booking System, structured in the same style as the provided example:
-
----
-
 # Court Booking System
 
 **College ID Number:** IEC2021057
