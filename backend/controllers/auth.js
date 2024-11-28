@@ -169,6 +169,10 @@ const loginUser = async (req, res) => {
     if (!foundUser) {
       return res.status(401).json({ error: "Invalid email or password." });
     }
+    if(!foundUser.isVerified){
+      return res.status(401).json({ error: "Need to verify you Account." });
+
+    }
 
     // Compare the provided password with the stored hashed password
     const isMatch = await bcrypt.compare(password, foundUser.password);
