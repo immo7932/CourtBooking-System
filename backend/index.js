@@ -29,12 +29,7 @@ async function main() {
 main().catch((err) => console.log(err));
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: "https://courtbooking-system.onrender.com", // Replace with your frontend's origin
-    credentials: true, // Allow cookies to be sent
-  })
-);
+app.use(cors())
 
 // Middleware
 app.use(cookieParser());
